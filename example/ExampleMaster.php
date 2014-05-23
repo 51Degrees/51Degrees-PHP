@@ -29,10 +29,20 @@ function fiftyone_degrees_echo_header() {
 }
 
 function fiftyone_degrees_echo_properties($properties) {
+
   foreach ($properties as $property => $value) {
-    if (is_array($value))
-      $value = implode('|', $value);
-    echo "<p>$property: $value</p>";
+    if ($property == 'debug_info' || $property == 'debug_timings') {
+      foreach ($value as $info => $result) {
+        echo "<p>$property - $info: $result</p>";
+      }
+    }
+    else {
+      if (is_array($value))
+        $value = implode('|', $value);
+      if (is_bool($value))
+        $value = $value === TRUE ? 'True' : 'False';
+      echo "<p>$property: $value</p>";
+    }
   }
 }
 

@@ -25,9 +25,7 @@ $_fiftyone_degrees_defer_execution = TRUE;
 
 require_once '51Degrees.php';
 
-
 global $_51d_suppress_update_output;
-
 
 set_time_limit(0);
 
@@ -59,13 +57,7 @@ else
 function fiftyone_degrees_start_update() {
   global $_fiftyone_degrees_data_file_path;
   @set_time_limit(0);
-  $time = microtime();
-  $time = explode(' ', $time);
-  $time = $time[1] + $time[0];
-  $start = $time;
   $dir = dirname(__FILE__);
-  $body_post = "";
-  $php_current = "phpCurrent=";
   $license_key = fiftyone_degrees_get_licenses($dir);
 
   foreach ($license_key as $key) {
@@ -96,7 +88,7 @@ function fiftyone_degrees_start_update() {
 }
 
 function fiftyone_degrees_print_alternate_source($licenseKey) {
-  fiftyone_degrees_write_message('Alternatively, you can download the data manually from <a href="https://51degrees.mobi/Products/Downloads/Premium.aspx?LicenseKeys='.$licenseKey.'">51Degrees.mobi</a> and place the unzipped contents in '. dirname(__FILE__).'.');
+  fiftyone_degrees_write_message('Alternatively, you can download the data manually from <a href="https://51degrees.com/Products/Downloads/Premium.aspx?LicenseKeys='.$licenseKey.'">51Degrees</a> and place the unzipped contents in '. dirname(__FILE__).'.');
 }
 
 /**
@@ -129,23 +121,7 @@ function ends_with($string, $test) {
   return substr_compare($string, $test, -$testlen) === 0;
 }
 
-/**
- * Downloads the update file content. Returns a string containing update data if successful, false if there was a failure and "NoData" if there is no
- * new data to add.
- *
- * @param string $url
- *   URL to download update from.
- * @param string $data
- *   Current file hashcodes.
- * @param string $dir
- *   Working directory.
- * @param $optional_headers
- *   Optional HTTP headers.
- * @return string
- *   New file content.
- */
 function fiftyone_degrees_download_to_file($url, $file_name) {
-  
   $result = FALSE;
   $params = array(
     'http' => array(
@@ -180,7 +156,7 @@ function fiftyone_degrees_download_to_file($url, $file_name) {
     if ($newf) {
       $bytes_loaded = 0;
       while(!feof($file)) {
-        /* fread used in this way presents two seperate files as the same stream.
+        /* fread used in this way presents two separate files as the same stream.
         This checks if the content length has been reached and stops the download
         before the file is corrupted. */
         $bytes_left = $fiftyone_degrees_bytes_max - $bytes_loaded;
@@ -199,20 +175,31 @@ function fiftyone_degrees_download_to_file($url, $file_name) {
       }
       fclose($newf);
       
-      if (fiftyone_degrees_has_valid_hash($http_response_header, $file_name, $temp_file_name)) {
-        $attempt = 0;
-        while (!@rename($temp_file_name , $file_name) && $attempt < 20) {
-          usleep(500);
-          $attempt++;
-        }
-        if($attempt >= 20) {
-          fiftyone_degrees_write_message('The data file cannot be written, probably because the server does not have sufficient permissions, or another process is locking the file.'); 
+      if (fiftyone_degrees_has_valid_hash($http_response_header, $temp_file_name)) {
+        // check that the file is a supported version
+        $temp_file = fopen($temp_file_name, 'rb');
+        $info = fiftyone_degrees_get_data_info($temp_file);
+        $version = "{$info['major_version']}.{$info['minor_version']}";
+        $supported_version = fiftyone_degrees_get_supported_version();
+        fclose($temp_file);
+        if ($version != $supported_version) {
+          fiftyone_degrees_write_message('The data file downloaded has a newer format version than this API supports. Update the API to get new data files.');
         }
         else {
-          $new_data_date = fiftyone_degrees_get_data_date();
-          $new_data_date_f = date('r', $new_data_date);
-          fiftyone_degrees_write_message("New data downloaded published on $new_data_date_f");
-          $result = TRUE;
+          $attempt = 0;
+          while (!@rename($temp_file_name , $file_name) && $attempt < 20) {
+            usleep(500);
+            $attempt++;
+          }
+          if($attempt >= 20) {
+            fiftyone_degrees_write_message('The data file cannot be written, probably because the server does not have sufficient permissions, or another process is locking the file.'); 
+          }
+          else {
+            $new_data_date = fiftyone_degrees_get_data_date();
+            $new_data_date_f = date('r', $new_data_date);
+            fiftyone_degrees_write_message("New data downloaded published on $new_data_date_f");
+            $result = TRUE;
+          }
         }
       }
       else {
@@ -234,7 +221,7 @@ function fiftyone_degrees_response_is_304($http_response_header) {
   return FALSE;
 }
 
-function fiftyone_degrees_has_valid_hash ($http_response_header, $current_file, $new_file) {
+function fiftyone_degrees_has_valid_hash ($http_response_header, $new_file) {
   foreach($http_response_header as $header) {
     if (strpos($header, 'Content-MD5: ') === 0) {
       $server_hash = str_replace ('Content-MD5: ', '', $header);

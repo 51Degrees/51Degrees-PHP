@@ -159,18 +159,26 @@ function fiftyone_degrees_get_size($img_data) {
   global $_fiftyone_degrees_image_factor;
   global $_fiftyone_degrees_image_width_parameter;
   global $_fiftyone_degrees_image_height_parameter;
+  global $_fiftyone_degrees_default_auto;
+
+  if (!isset($_fiftyone_degrees_default_auto)) {
+    $_fiftyone_degrees_default_auto = 50;
+  }
+
+  // The value of the auto flag.
+  $auto = 'auto';
   
   if (isset($_fiftyone_degrees_image_width_parameter)) {
     $width_param = $_fiftyone_degrees_image_width_parameter;
   }
   else {
-    $width_param = 'width';
+    $width_param = 'w';
   }
   if (isset($_fiftyone_degrees_image_height_parameter)) {
     $height_param = $_fiftyone_degrees_image_height_parameter;
   }
   else {
-    $height_param = 'width';
+    $height_param = 'h';
   }
   
   $source_width = imagesx($img_data);
@@ -198,17 +206,25 @@ function fiftyone_degrees_get_size($img_data) {
   if (isset($_GET[$width_param])) {
     $w = intval($_GET[$width_param]);
     if ($w != 0) {
-      if ($w > $width_limit)
+      if ($w > $width_limit) {
         $w = $width_limit;
+	  }
     }
+	else if ($_GET[$width_param] === $auto) {
+		$w = $_fiftyone_degrees_default_auto;
+	}
   }
 
   if (isset($_GET[$height_param])) {
     $h = intval($_GET[$height_param]);
     if ($h != 0) {
-      if ($h > $height_limit)
+      if ($h > $height_limit) {
         $h = $height_limit;
+	  }
     }
+	else if ($_GET[$height_param] === $auto) {
+		$h = $_fiftyone_degrees_default_auto;
+	}
   }
   if (!isset($w) && !isset($h)) {
     $w = $width_limit;

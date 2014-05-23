@@ -1,26 +1,4 @@
 <?php
-
-/* *********************************************************************
- * This Source Code Form is copyright of 51Degrees Mobile Experts Limited. 
- * Copyright 2014 51Degrees Mobile Experts Limited, 5 Charlotte Close,
- * Caversham, Reading, Berkshire, United Kingdom RG4 7BY
- * 
- * This Source Code Form is the subject of the following patent 
- * applications, owned by 51Degrees Mobile Experts Limited of 5 Charlotte
- * Close, Caversham, Reading, Berkshire, United Kingdom RG4 7BY: 
- * European Patent Application No. 13192291.6; and 
- * United States Patent Application Nos. 14/085,223 and 14/085,301.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0.
- * 
- * If a copy of the MPL was not distributed with this file, You can obtain
- * one at http://mozilla.org/MPL/2.0/.
- * 
- * This Source Code Form is "Incompatible With Secondary Licenses", as
- * defined by the Mozilla Public License, v. 2.0.
- * ********************************************************************* */
- 
 require_once 'ExampleMaster.php';
 ?>
 
@@ -37,35 +15,53 @@ require_once 'ExampleMaster.php';
 require_once '../core/51Degrees.php';
 
 $headers = fiftyone_degrees_get_headers();
-$use_auto = fiftyone_degrees_get_dataset_name($headers) === 'Ultimate';
+$dataset_name = fiftyone_degrees_get_dataset_name($headers);
+$use_auto = $dataset_name === 'Enterprise';
 $file = $_GET['image'];
-
+var_dump($dataset_name);
+var_dump($use_auto);
 $path = 'Gallery/' . $file;
+
+global $_fiftyone_degrees_image_width_parameter;
+if (isset($_fiftyone_degrees_image_width_parameter))
+  $w_param = $_fiftyone_degrees_image_width_parameter;
+else
+  $w_param = 'w';
+global $_fiftyone_degrees_image_height_parameter;
+if (isset($_fiftyone_degrees_image_height_parameter))
+  $h_param = $_fiftyone_degrees_image_height_parameter;
+else
+  $h_param = 'h';
 
 if (file_exists($path)) {
   $img = get_image_panel($use_auto, $file);
-   echo $img;
+  echo $img;
 }
 
 function get_image_panel($use_auto, $image_name) {
+  global $_51d;
+  global $w_param;
+  global $h_param;
   if ($use_auto) {
-    $output = "<img src=\"E.gif\" data-src=\"../core/ImageHandler.php?src=../example/Gallery/$image_name&width=auto\" class=\"GalleryImage\"/>";
+    $output = "<img src=\"E.gif\" data-src=\"../core/ImageHandler.php?src=../example/Gallery/$image_name&$w_param=auto\" class=\"GalleryImage\"/>";
   }
   else {
-    if (array_key_exists('ScreenPixelsWidth', $_51d) && is_numeric($_51d['ScreenPixelsWidth']))
+    if (array_key_exists('ScreenPixelsWidth', $_51d) && is_numeric($_51d['ScreenPixelsWidth']) && $_51d['ScreenPixelsWidth'] != 0)
       $width = $_51d['ScreenPixelsWidth'];
     else
       $width = 800;
-    $output = "<img src=\"../core/ImageHandler.php?src=../example/Gallery/$image_name&width=$width\" class=\"GalleryImage\" />";
+    $output = "<img src=\"../core/ImageHandler.php?src=../example/Gallery/$image_name&$w_param=$width\" class=\"GalleryImage\" />";
   }
   return $output;
 }
 
 ?>
 </div>
+<?php if ($use_auto) { ?>
 <script src="../core/51Degrees.core.js.php"></script>
 <script>
-  new FODIO();
+  new FODIO(<?php echo "'$w_param', '$h_param'";?>);
 </script>
+<?php } ?>
 </body>
 </html>

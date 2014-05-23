@@ -86,7 +86,7 @@ $_fiftyone_degrees_return_strings = FALSE;
 * Defaults to 51Degrees-Lite.dat.
 */
 global $_fiftyone_degrees_data_file_path;
-$_fiftyone_degrees_data_file_path = '51Degrees-Ultimate.dat';
+$_fiftyone_degrees_data_file_path = '51Degrees.dat';
 
 /**
  * Controls which property values should be returned from detection. 
@@ -114,7 +114,7 @@ The following img tag:
 <img src="Test.jpg" />
 
 Becomes:
-<img src="E.gif" data-src="ImageHandler.php?src=Test.jpg&width=auto" />
+<img src="E.gif" data-src="ImageHandler.php?src=Test.jpg&w=auto" />
 
 E.gif is 1x1 pixel place holder for the image, and the data-src attribute should
 contain the location of ImageHandler.php, with the src and dimensions of the
@@ -147,7 +147,8 @@ $_fiftyone_degrees_image_height_parameter:* string - controls the width query
 *Note that if $_fiftyone_degrees_image_width_parameter or
 $_fiftyone_degrees_image_height_parameter are changed from their default then
 the new value must be placed in the FODIO constructor. For instance, if they're
-changed to 'w' and 'h' then the FODIO constructor would be new FODIO('w', 'h');
+changed to 'width' and 'height' then the FODIO constructor would be 
+new FODIO('width', 'height');
 
 A demonstration can be seen in Gallery.php.
 
@@ -215,23 +216,59 @@ accessing the FODF variable.
   
 - ChangeLog
 
+v3.1.1.2
+
+- Fixed a defect in the updater where it would download a data file with a newer
+  version than supported which would then crash subsequent detections.
+
+- Added a file, '51Degrees_update_logger.php'. This file will attempt a device
+  data update and display the log and progress in a prettier form. This should
+  only be used with vanilla installations, CMS plugins already have this
+  functionality built into the plugin.
+
+v3.1.0.1
+
+- The 51Degrees device data file has been changed so that there are more
+  internal lists that are ordered in a different way. That means that the
+  detector is now much faster on certain useragents that feature a lot in other
+  useragents.
+
+v3.0.9.4
+
+- The image width and height parameters have been changed to 'w' and 'h'.
+
+- Added the $_fiftyone_degrees_default_auto attribute. If an image is
+  requested with a width or height set to 'auto', the parameter will be
+  changed to the value set in 'defaultAuto'. This change was made for
+  clients without javascript that should still be served images, such
+  as search crawlers. The attribute is optional and defaults to 50.
+
+- The API no longer crashes when given a useragent that feature in many other
+  useragents but is not used widely itself, ie 'Mozilla/4'.
+
+- The 'DataFile' element in the $_51d array now says the datafile that was used
+  rather than the one that was supposed to be used. This makes identifying
+  broken file paths easier.
+
 v3.0.8.3
 
-Changed to use system agnostic filepaths.
-Fixed issue where a fallback datafile name did not use a fully qualified path.
-The update script now specifies a timezone to prevent a warning from strtotime.
+- Changed to use system agnostic filepaths.
+
+- Fixed issue where a fallback datafile name did not use a fully qualified path.
+
+- The update script now specifies a timezone to prevent a warning from strtotime.
 
 v3.0.7.2
 
-The API now supports PHP 5.3.
+- The API now supports PHP 5.3.
 
-Fixed a bug where boolean values were not being properly cast to boolean types.
+- Fixed a bug where boolean values were not being properly cast to boolean types.
 
 v3.0.6.5
 
-Image optimiser has been given more configuration options to restrict the number
-of images that can be generated. The following 5 image options can now be
-configured in the 51Degrees.php file:
+- Image optimiser has been given more configuration options to restrict the number
+  of images that can be generated. The following 5 image options can now be
+  configured in the 51Degrees.php file:
 
 $_fiftyone_degrees_max_image_width: integer - determines the maximum width an
   image can be resized to. Aspect ratio will be retained if possible to do so.
@@ -252,28 +289,28 @@ $_fiftyone_degrees_image_height_parameter are changed from their default then
 the new value must be placed in the FODIO constructor. For instance, if they're
 changed to 'w' and 'h' then the FODIO constructor would be new FODIO('w', 'h');
 
-Added 51Degrees.features.js.php. Calling this script returns a javascript object
-of properties the requesting device supports.
+- Added 51Degrees.features.js.php. Calling this script returns a javascript object
+  of properties the requesting device supports.
 
-Renamed 51Degrees.js.php to 51Degrees.core.js.php. This is to align with other
-51Degrees APIs and to distinguish from 51Degrees.features.js.php.
+- Renamed 51Degrees.js.php to 51Degrees.core.js.php. This is to align with other
+  51Degrees APIs and to distinguish from 51Degrees.features.js.php.
 
-Metadata now has type information for device properties.
+- Metadata now has type information for device properties.
 
-Improved the metadata cache, so old caches are removed and there is no chance of
-one being used for the wrong data set.
+- Improved the metadata cache, so old caches are removed and there is no chance of
+  one being used for the wrong data set.
 
-The data format has changed slightly to allow faster property value retrieval
-from properties in a future version.
+- The data format has changed slightly to allow faster property value retrieval
+  from properties in a future version.
 
-Data updates are now available. By placing a 51Degress .lic file in the
-51Degrees directory and requesting 51Degrees_Update.php the api attempts to get
-the latest data file and place it in the file location specified in
-51Degrees.php.
+- Data updates are now available. By placing a 51Degress .lic file in the
+  51Degrees directory and requesting 51Degrees_Update.php the api attempts to get
+  the latest data file and place it in the file location specified in
+  51Degrees.php.
 
 Fixed a bug where defer_execution = true was only being partially respected.
 
-Reworked image cache so there is no chance of a cache collision.
+- Reworked image cache so there is no chance of a cache collision.
 
 v3.0.3.0
 - The alorithm now implements closest and nearest matching

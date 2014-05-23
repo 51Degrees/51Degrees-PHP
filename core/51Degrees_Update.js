@@ -23,6 +23,8 @@ function fiftyone_degrees_on_progress() {
 
 function fiftyone_degrees_start_updates()
 {
+  var ctrl = document.getElementById('update_message');
+  ctrl.innerHTML = '';
 	try
 	{
 		// Will only work for IE. Used to access partial
