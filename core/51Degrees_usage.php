@@ -30,7 +30,14 @@ fiftyone_degrees_SendDetails();
  * analysis and product improvement.
  */
 function fiftyone_degrees_SendDetails() {
-  if (extension_loaded('sockets') || extension_loaded('php_sockets')) {
+  if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+  }
+  $details_sent = FALSE;
+  if (array_key_exists('fiftyone_degrees_details_sent', $_SESSION)) {
+    $details_sent = $_SESSION['fiftyone_degrees_details_sent'] === TRUE;
+  }
+  if (!$details_sent && (extension_loaded('sockets') || extension_loaded('php_sockets'))) {
 
     $server_ip = 'udp.devices.51degrees.mobi';
     $server_port = 80;
@@ -50,13 +57,16 @@ function fiftyone_degrees_SendDetails() {
       $ip = $_SERVER['REMOTE_ADDR'];
     }
 
+    $server_ip = $_SERVER['SERVER_ADDR'];
+
     // Construct the XML message.
     $message = '<?xml version="1.0" encoding="utf-16"?>
             <Device>
-            <DateSent>' . gmdate('c') . '</DateSent>' .
-            '<Product>51degrees.mobi - Foundation - PHP</Product>
-            <Version>2.1.6.11</Version>
-            <ClientIP>' . $ip . '</ClientIP>';
+            <DateSent>' . gmdate('c') . '</DateSent>
+            <Product>51degrees - Foundation - PHP</Product>
+            <Version>3.1.2.1</Version>
+            <ClientIP>' . $ip . '</ClientIP>
+            <ServerIP>' . $server_ip . '</ServerIP>';
 
     // Add the headers to the information being sent.
     $headers = fiftyone_degrees_GetHeaders();
@@ -75,6 +85,7 @@ function fiftyone_degrees_SendDetails() {
     if ($socket) {
       @socket_sendto($socket, $message, strlen($message), 0, $server_ip, $server_port);
     }
+    $_SESSION['fiftyone_degrees_details_sent'] = TRUE;
   }
 }
 

@@ -216,6 +216,11 @@ accessing the FODF variable.
   
 - ChangeLog
 
+v3.1.2.1
+
+- Made improvements to the share usage script. It will now only send once per
+  session.
+
 v3.1.1.2
 
 - Fixed a defect in the updater where it would download a data file with a newer
