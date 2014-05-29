@@ -216,6 +216,11 @@ accessing the FODF variable.
   
 - ChangeLog
 
+v3.1.3.1
+
+- Removed usage of the method DirectoryIterator::getExtension() in
+  51Degrees_metadata.php as it is not available in PHP 5.3.5 and earlier.
+
 v3.1.2.1
 
 - Made improvements to the share usage script. It will now only send once per

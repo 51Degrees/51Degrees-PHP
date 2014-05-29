@@ -114,8 +114,9 @@ function fiftyone_degrees_get_meta_data() {
   if ($handle !== FALSE) {
     $dir = new DirectoryIterator(dirname(__FILE__));
     foreach ($dir as $fileinfo) {
-      if ($fileinfo->isFile() && $fileinfo->getExtension() === "cache") {
-        if (strpos($fileinfo->getFilename(), '51Degrees_meta_data_cache_') === 0) {
+      if ($fileinfo->isFile()) {
+        $file_extension = pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION);
+        if ($file_ext === "cache" && strpos($fileinfo->getFilename(), '51Degrees_meta_data_cache_') === 0) {
           $path = $fileinfo->getRealPath();
           @unlink($path);
         }
