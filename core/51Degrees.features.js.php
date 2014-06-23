@@ -37,7 +37,8 @@ function fiftyone_degrees_write_features() {
       elseif (is_bool($value)) {
         $value = $value ? 'true' : 'false';
       }
-      $pairs[] = "$property: $value";
+      $clean_property = str_replace ("/", "", $property);
+      $pairs[] = "$clean_property: $value";
     }
   }
   echo 'var FODF = {';
