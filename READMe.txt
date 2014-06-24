@@ -216,6 +216,12 @@ accessing the FODF variable.
   
 - ChangeLog
 
+v3.1.4.2
+
+- Fixed bug where metadata caches would not be removed.
+- Feature.js property names are now stripped of '/' characters so they
+  don't cause parser errors.
+
 v3.1.3.1
 
 - Removed usage of the method DirectoryIterator::getExtension() in
