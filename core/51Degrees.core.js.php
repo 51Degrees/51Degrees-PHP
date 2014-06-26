@@ -10,11 +10,6 @@ header('Content-type: text/javascript');
 
 header('Vary: User-Agent');
 header('Cache-Control: public');
-// Expires: Thu, 01 Dec 1994 16:00:00 GMT ----- SET TO NEXT UPDATE DATE.
-// Last-Modified: Tue, 15 Nov 1994 12:45:26 +0000 ----- SET TO PUBLISHED DATE.
-
-// $hash = HASH OF DATA SET METADATA AND USERAGENT.
-//header("ETag: $hash");.
 
 if (isset($_SESSION) === FALSE)
   session_start();
@@ -63,11 +58,14 @@ function fiftyone_degrees_get_script() {
 
   $output .= "function FODPO() { var profileIds = new Array();\n";
   $c = count($profile_scripts);
-  if (count($profile_scripts) > 0 && (isset($_SESSION['51D_ProfileIds']) === FALSE || strlen($_SESSION['51D_ProfileIds']) == 0)) {
+  if ($c > 0 && (isset($_SESSION['51D_ProfileIds']) === FALSE || strlen($_SESSION['51D_ProfileIds']) == 0)) {
     foreach ($profile_scripts as $property) {
       if (isset($_51d[$property])) {
-        $output .= $_51d[$property];
-        $output .= "\n";
+        $props = $_51d[$property];
+        foreach($props as $prop) {
+          $output .= $prop;
+          $output .= "\n";
+        }
       }
     }
     $output .= "document.cookie = \"51D_ProfileIds=\" + profileIds.join(\"|\");";

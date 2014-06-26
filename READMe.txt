@@ -216,11 +216,13 @@ accessing the FODF variable.
   
 - ChangeLog
 
-v3.1.4.2
+v3.1.4.3
 
 - Fixed bug where metadata caches would not be removed.
 - Feature.js property names are now stripped of '/' characters so they
   don't cause parser errors.
+- Fixed bug where Feature Detection script would not be created in the core.js
+  script.
 
 v3.1.3.1
 
