@@ -57,6 +57,11 @@ function fiftyone_degrees_create_image() {
     }
     else {
       $resize = imagecreatetruecolor($sizes['width'], $sizes['height']);
+	  
+	  imagesavealpha($resize, true);
+	  
+	  $trans_colour = imagecolorallocatealpha($resize, 0, 0, 0, 127);
+	  imagefill($resize, 0, 0, $trans_colour);
       // Resize.
 
       imagecopyresampled($resize, $source, 0, 0, 0, 0, $sizes['width'], $sizes['height'], $sizes['source_width'], $sizes['source_height']);
