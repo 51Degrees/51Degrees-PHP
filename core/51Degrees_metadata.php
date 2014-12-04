@@ -95,7 +95,7 @@ function fiftyone_degrees_get_meta_data() {
   }
 
   foreach ($value_indexes as $value_index) {
-    for ($i = $value_index['first_value_index']; $i < $value_index['last_value_index']; $i++) {
+    for ($i = $value_index['first_value_index']; $i <= $value_index['last_value_index']; $i++) {
       $property_value = fiftyone_degrees_read_property_value($i, $headers);
       $name = $property_names[$property_value['property_index']];
 
