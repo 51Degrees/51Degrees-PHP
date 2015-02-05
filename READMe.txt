@@ -216,6 +216,10 @@ accessing the FODF variable.
   
 - ChangeLog
 
+v3.1.5.1
+
+- Fixed bug that prevented properties from listing all their values.
+
 v3.1.4.3
 
 - Fixed bug where metadata caches would not be removed.
