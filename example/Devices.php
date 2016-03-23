@@ -40,7 +40,7 @@ $_fiftyone_degrees_defer_execution = TRUE;
 fiftyone_degrees_set_file_handle();
 $headers = fiftyone_degrees_get_headers();
 $dataset_name = fiftyone_degrees_get_dataset_name($headers);
-$use_auto = $dataset_name === 'Ultimate' || $dataset_name === 'Premium';
+$use_auto = $dataset_name === 'Enterprise' || $dataset_name === 'PremiumV3';
 if ($use_auto) {
 
   $start = microtime(TRUE);
