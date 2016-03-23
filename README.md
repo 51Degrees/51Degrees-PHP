@@ -14,3 +14,59 @@ If you are running in an environment with restricted access rights such as a Wor
 This API is still maintained and is in the working order, but maintenance is only limited to bug fixes.
 
 Also please note that the native PHP API requires files of version 3.1.
+
+## Usage
+### Basic Usage
+```php
+<?php
+require_once 'core/51Degrees.php';
+
+// Detection results are stored in the $_51d global.
+$isMobile = $_51d['IsMobile'];
+
+// Use like:
+if ($isMobile) {
+    echo "<h3>Mobile device.</h3>";
+} else {
+    echo "<h3>Non-Mobile device.</h3>";
+}
+?>
+```
+
+###Match Metrics
+```php
+<?php
+require_once 'core/51Degrees.php';
+
+// Match metrics:
+echo "<p>DeviceId: ".$_51d["DeviceId"]."</p>";
+echo "<p>Method: ".$_51d["Method"]."</p>";
+echo "<p>Difference: ".$_51d["debug_info"]["difference"]."</p>";
+?>
+```
+
+###Metadata
+To retrieve description for a particular property:
+```php
+<?php
+require_once 'core/51Degrees_metadata.php';
+
+// $_51d_meta_data global contains metadata for properties and values.
+
+// Print description for the IsMobile property.
+echo $_51d_meta_data['IsMobile']['Description'];
+?>
+```
+
+To print all possible values for a chosen property:
+```php
+<?php
+require_once 'core/51Degrees_metadata.php';
+
+// Shows all possible valus for the IsMobile property and a 
+// description for each value.
+echo "<pre>";
+    var_dump($_51d_meta_data['IsMobile']['Values']);
+echo "</pre>";
+?>
+```
